@@ -11,7 +11,8 @@ const program = new Command();
 program
   .name('typeset')
   .description('Convert Markdown to WeChat-compatible HTML with styled themes')
-  .version('1.0.0');
+  .version('1.0.0')
+  .enablePositionalOptions();
 
 program
   .command('styles')

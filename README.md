@@ -19,6 +19,9 @@ cd Typography-Skill
 
 # 安装依赖
 cd cli && npm install
+
+# 构建 TypeScript
+npm run build
 ```
 
 **环境要求**：Node.js >= 18.0.0
@@ -91,11 +94,16 @@ node cli/bin/typeset.js styles
 ```
 Typography-Skill/
 ├── cli/
-│   ├── bin/typeset.js       # CLI 入口（commander）
-│   ├── lib/
-│   │   ├── render.js         # 核心：Markdown → 微信 HTML 渲染管线
-│   │   ├── styles.js         # 主题样式配置（19 种主题）
-│   │   └── xiaohongshu.js    # 小红书卡片图片生成（Puppeteer）
+│   ├── bin/typeset.js        # CLI 入口（shim → dist）
+│   ├── src/
+│   │   ├── bin/typeset.ts    # CLI 逻辑（commander）
+│   │   ├── lib/
+│   │   │   ├── types.ts      # TypeScript 类型定义
+│   │   │   ├── styles.ts     # 主题样式配置（19 种主题）
+│   │   │   ├── render.ts     # 核心：Markdown → 微信 HTML 渲染管线
+│   │   │   └── xiaohongshu.ts # 小红书卡片图片生成（Puppeteer）
+│   │   └── __tests__/        # Vitest 测试文件
+│   ├── dist/                 # 编译输出（gitignore）
 │   ├── test/                 # 测试用 Markdown 文件
 │   └── package.json
 └── CLAUDE.md
@@ -105,9 +113,9 @@ Typography-Skill/
 
 ### 添加新主题
 
-编辑 `cli/lib/styles.js`，在 `STYLES` 对象中添加新条目：
+编辑 `cli/src/lib/styles.ts`，在 `STYLES` 对象中添加新条目：
 
-```javascript
+```typescript
 'my-theme': {
   name: '我的主题',
   styles: {
@@ -133,6 +141,14 @@ Typography-Skill/
 
 ```bash
 cd cli && npm test
+```
+
+### 构建
+
+```bash
+npm run build    # 编译 TypeScript
+npm run lint     # 仅类型检查
+npm run dev      # 监听模式编译
 ```
 
 ## License

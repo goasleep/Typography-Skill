@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**typeset** is a Node.js CLI tool that converts Markdown to WeChat-compatible HTML with styled typography themes, and generates Xiaohongshu (Little Red Book) card images from Markdown content.
+**typeset** is a Node.js CLI tool that converts Markdown to WeChat-compatible HTML with styled typography themes, and generates Xiaohongshu (Little Red Book) card images from Markdown content. Written in TypeScript.
 
-All source code lives under `cli/`.
+All source code lives under `cli/src/`.
 
 ## Commands
 
@@ -14,7 +14,10 @@ All source code lives under `cli/`.
 # Install dependencies
 cd cli && npm install
 
-# Run the CLI (convert markdown to styled HTML, outputs to stdout)
+# Build TypeScript
+npm run build
+
+# Run the CLI (must build first)
 node cli/bin/typeset.js <file> -s <style-key>
 node cli/bin/typeset.js <file> -s <style-key> -o output.html
 
@@ -27,15 +30,41 @@ node cli/bin/typeset.js image <file> -s <style-key> -o ./xhs_output
 # Skip clipboard-compatible simplifications (keeps CSS Grid instead of converting to tables)
 node cli/bin/typeset.js <file> --no-clipboard
 
-# Tests (note: test/test.js referenced in package.json does not exist yet)
+# Tests
 cd cli && npm test
+
+# Type check without emitting
+npm run lint
 ```
 
 ## Architecture
 
+### Source Structure
+
+```
+cli/src/
+  bin/typeset.ts        # CLI entry point (commander)
+  lib/
+    types.ts             # Shared TypeScript interfaces
+    styles.ts            # 19 theme definitions (StyleConfig map)
+    render.ts            # Core render pipeline
+    xiaohongshu.ts       # Xiaohongshu card image generator (Puppeteer)
+  __tests__/             # Vitest test files
+```
+
+Compiled output goes to `cli/dist/`. The `cli/bin/typeset.js` is a thin shim that requires from `dist/`.
+
+### Key Types (`src/lib/types.ts`)
+
+- `StyleConfig` — `{ name: string; styles: Record<string, string> }`
+- `ContentBlock` — `{ type: 'h1'|'h2'|'h3'|'p'|'li'|'quote'|'hr'; text?: string }`
+- `ArticleInfo` — `{ charCount, readingTime, imageCount }`
+- `RenderOptions` — `{ clipboard?: boolean }`
+- `GenerateImagesResult` — `{ files: string[]; totalPages: number; articleInfo: ArticleInfo }`
+
 ### Render Pipeline (WeChat HTML)
 
-`cli/lib/render.js` is the core module. The pipeline is:
+`cli/src/lib/render.ts` is the core module. The pipeline is:
 
 1. **`preprocessMarkdown()`** — Normalizes horizontal rules, fixes broken bold formatting (e.g. from Feishu exports), normalizes list items
 2. **`createMarkdownIt()`** — Parses Markdown with syntax highlighting via highlight.js; code blocks get macOS-style window chrome (red/yellow/green dots)
@@ -44,7 +73,7 @@ cd cli && npm test
 
 ### Xiaohongshu Image Pipeline
 
-`cli/lib/xiaohongshu.js` generates paginated card images:
+`cli/src/lib/xiaohongshu.ts` generates paginated card images:
 
 1. **`createSimplifiedContent()`** — Strips Markdown to basic content blocks (headings, paragraphs, lists, quotes)
 2. **`splitIntoPages()`** — Uses Puppeteer to measure each block's rendered height, then splits into 750x1000px pages (first page has less content area due to info panel offset)
@@ -52,9 +81,9 @@ cd cli && npm test
 
 ### Style System
 
-`cli/lib/styles.js` exports a `STYLES` object keyed by style ID. Each entry has `name` (Chinese display name) and `styles` (CSS selector → inline style string map). There are 19 themes including `wechat-default`, `latepost-depth`, `wechat-ft` (Financial Times), `wechat-anthropic` (Claude), `wechat-tech`, `wechat-elegant`, `wechat-deepread`, `wechat-nyt` (NYT), `wechat-jonyive`, `wechat-medium`, `wechat-apple`, `kenya-emptiness`, `hische-editorial`, `ando-concrete`, `gaudi-organic`, `guardian`, `nikkei`, `warm-docs`, `lemonde`.
+`cli/src/lib/styles.ts` exports a `STYLES` object keyed by style ID. Each entry has `name` (Chinese display name) and `styles` (CSS selector → inline style string map). There are 19 themes.
 
-To add a new style: add a new key to the `STYLES` object in `cli/lib/styles.js` with `name` and `styles` map. The `styles` map keys are CSS selectors (`h1`, `p`, `code`, `blockquote`, etc.); values are inline CSS strings.
+To add a new style: add a new key to the `STYLES` object in `cli/src/lib/styles.ts` with `name` and `styles` map. The `styles` map keys are CSS selectors (`h1`, `p`, `code`, `blockquote`, etc.); values are inline CSS strings.
 
 ### Key Constraints
 
@@ -63,3 +92,4 @@ To add a new style: add a new key to the `STYLES` object in `cli/lib/styles.js` 
 - Heading inline elements (strong, em, a, code, etc.) get override styles to inherit the heading color and prevent theme style leaking into nested elements
 - WeChat doesn't support CSS Grid, so `simplifyForClipboard` converts image grids to `<table>` layouts
 - Puppeteer is required for the `image` command (measuring block heights and generating screenshots)
+- tsconfig uses `"lib": ["ES2022", "DOM"]` because jsdom requires DOM types
