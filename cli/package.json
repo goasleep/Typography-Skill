@@ -1,0 +1,34 @@
+{
+  "name": "typeset-cli",
+  "version": "1.0.0",
+  "description": "Convert Markdown to WeChat-compatible HTML with styled themes",
+  "bin": {
+    "typeset": "./bin/typeset.js"
+  },
+  "main": "dist/lib/render.js",
+  "types": "dist/lib/render.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "highlight.js": "^11.9.0",
+    "jsdom": "^24.0.0",
+    "markdown-it": "^14.0.0",
+    "puppeteer": "^23.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^28.0.3",
+    "@types/markdown-it": "^14.1.2",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
+  }
+}

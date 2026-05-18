@@ -1,0 +1,1 @@
+{"version":3,"file":"xiaohongshu.d.ts","sourceRoot":"","sources":["../../src/lib/xiaohongshu.ts"],"names":[],"mappings":"AAIA,OAAO,KAAK,EAA6B,qBAAqB,EAAE,oBAAoB,EAAoB,MAAM,SAAS,CAAC;AAsMxH,iBAAe,cAAc,CAC3B,QAAQ,EAAE,MAAM,EAChB,QAAQ,EAAE,MAAM,EAChB,SAAS,EAAE,MAAM,EACjB,OAAO,GAAE,qBAA0B,GAClC,OAAO,CAAC,oBAAoB,CAAC,CA4C/B;AAED,OAAO,EAAE,cAAc,EAAE,CAAC"}

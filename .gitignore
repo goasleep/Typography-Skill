@@ -1,0 +1,18 @@
+node_modules/
+.DS_Store
+*.log
+xhs_output/
+*.png
+!cli/test/fixtures/*.png
+
+# Puppeteer
+.chrome/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
