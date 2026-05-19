@@ -18,10 +18,10 @@ git clone <repo-url>
 cd Typography-Skill
 
 # 安装依赖
-cd cli && npm install
+cd cli && pnpm install
 
 # 构建 TypeScript
-npm run build
+pnpm run build
 ```
 
 **环境要求**：Node.js >= 18.0.0
@@ -140,15 +140,15 @@ Typography-Skill/
 ### 运行测试
 
 ```bash
-cd cli && npm test
+cd cli && pnpm test
 ```
 
 ### 构建
 
 ```bash
-npm run build    # 编译 TypeScript
-npm run lint     # 仅类型检查
-npm run dev      # 监听模式编译
+pnpm run build    # 编译 TypeScript
+pnpm run lint     # 仅类型检查
+pnpm run dev      # 监听模式编译
 ```
 
 ## License

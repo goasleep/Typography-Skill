@@ -2,6 +2,22 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## CodeGraph
+
+This project has CodeGraph initialized (`.codegraph/` exists). Use it for efficient code exploration:
+
+**For exploration questions** (e.g., "how does X work?", "explain the Y system"), spawn an Explore agent with this instruction:
+
+> This project has CodeGraph initialized (.codegraph/ exists). Use `codegraph_explore` as your PRIMARY tool — it returns full source code sections from all relevant files in one call.
+
+**Direct use in main session** (for targeted lookups before editing):
+- `codegraph_search` — Find symbols by name
+- `codegraph_callers`/`codegraph_callees` — Trace call flow
+- `codegraph_impact` — Check what's affected before editing
+- `codegraph_node` — Get a single symbol's details
+
+**Do NOT use** `codegraph_context` or `codegraph_explore` directly in the main session — they return large amounts of source code that fill up context.
+
 ## Project Overview
 
 **typeset** is a Node.js CLI tool that converts Markdown to WeChat-compatible HTML with styled typography themes, and generates Xiaohongshu (Little Red Book) card images from Markdown content. Written in TypeScript.
@@ -12,10 +28,13 @@ All source code lives under `cli/src/`.
 
 ```bash
 # Install dependencies
-cd cli && npm install
+cd cli && pnpm install
 
 # Build TypeScript
-npm run build
+pnpm run build
+
+# Watch mode for development
+pnpm run dev
 
 # Run the CLI (must build first)
 node cli/bin/typeset.js <file> -s <style-key>
@@ -31,10 +50,10 @@ node cli/bin/typeset.js image <file> -s <style-key> -o ./xhs_output
 node cli/bin/typeset.js <file> --no-clipboard
 
 # Tests
-cd cli && npm test
+cd cli && pnpm test
 
 # Type check without emitting
-npm run lint
+pnpm run lint
 ```
 
 ## Architecture
