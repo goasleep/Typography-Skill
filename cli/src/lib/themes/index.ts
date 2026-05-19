@@ -30,6 +30,7 @@ import { theme as wechatApple } from './artistic/wechat-apple';
 import { theme as kenyaEmptiness } from './artistic/kenya-emptiness';
 import { theme as andoConcrete } from './artistic/ando-concrete';
 import { theme as gaudiOrganic } from './artistic/gaudi-organic';
+import { theme as purpleElegance } from './artistic/purple-elegance';
 
 // 导入商业主题
 import { theme as guardian } from './business/guardian';
@@ -40,6 +41,7 @@ import { theme as nikkei } from './business/nikkei';
  * 集中管理所有主题的导入路径
  */
 const themeModules: Record<string, () => Promise<StyleConfig>> = {
+  'purple-elegance': () => import('./artistic/purple-elegance').then(m => m.theme),
   'wechat-default': () => import('./base/wechat-default').then(m => m.theme),
   'wechat-elegant': () => import('./base/wechat-elegant').then(m => m.theme),
   'wechat-deepread': () => import('./base/wechat-deepread').then(m => m.theme),
@@ -66,6 +68,7 @@ const themeModules: Record<string, () => Promise<StyleConfig>> = {
  * 静态主题集合（用于向后兼容）
  */
 export const staticThemes: StylesMap = {
+  'purple-elegance': purpleElegance,
   'wechat-default': wechatDefault,
   'wechat-elegant': wechatElegant,
   'wechat-deepread': wechatDeepread,
@@ -142,7 +145,7 @@ export const themeCategories = {
   base: ['wechat-default', 'wechat-elegant', 'wechat-deepread', 'warm-docs'],
   tech: ['wechat-tech', 'wechat-anthropic', 'sub2api'],
   editorial: ['latepost-depth', 'wechat-ft', 'wechat-nyt', 'wechat-medium', 'hische-editorial', 'lemonde'],
-  artistic: ['wechat-jonyive', 'wechat-apple', 'kenya-emptiness', 'ando-concrete', 'gaudi-organic'],
+  artistic: ['wechat-jonyive', 'wechat-apple', 'kenya-emptiness', 'ando-concrete', 'gaudi-organic', 'purple-elegance'],
   business: ['guardian', 'nikkei'],
   user: [] // 用户自定义主题
 };

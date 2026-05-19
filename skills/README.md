@@ -1,16 +1,16 @@
 # WeChat Typer Skills
 
-A collection of three Claude Code skills for converting Markdown to WeChat-compatible HTML and generating Xiaohongshu card images.
+A collection of four Claude Code skills for converting Markdown to WeChat-compatible HTML, generating Xiaohongshu card images, and replicating custom themes.
 
 ## Skills Included
 
 ### 1. wechat-typer
-Convert Markdown articles to WeChat Official Account-compatible HTML with 19 professional typography themes.
+Convert Markdown articles to WeChat Official Account-compatible HTML with 20 professional typography themes.
 
 **When to use**: Publishing content on WeChat, preparing articles for WeChat editor, formatting Markdown for Chinese social media.
 
 ### 2. wechat-theme-explorer
-Explore and select from 19 typography themes for WeChat articles.
+Explore and select from 20 typography themes for WeChat articles.
 
 **When to use**: Choosing themes, browsing visual options, previewing typography styles.
 
@@ -18,6 +18,11 @@ Explore and select from 19 typography themes for WeChat articles.
 Generate Xiaohongshu (Little Red Book) card images from Markdown with automatic pagination.
 
 **When to use**: Creating content for Xiaohongshu, generating social media graphics, converting articles to visual cards.
+
+### 4. theme-replicator
+Extract typography styles from existing HTML pages and create reusable WeChat themes.
+
+**When to use**: Replicating website designs, copying favorite article styling, creating custom themes from HTML, analyzing web page styles.
 
 ## Installation
 
@@ -27,12 +32,14 @@ Generate Xiaohongshu (Little Red Book) card images from Markdown with automatic 
    - `wechat-typer.skill`
    - `wechat-theme-explorer.skill`
    - `xiaohongshu-generator.skill`
+   - `theme-replicator.skill`
 
 2. **Install via Claude Code**:
    ```bash
    claude skill install wechat-typer.skill
    claude skill install wechat-theme-explorer.skill
    claude skill install xiaohongshu-generator.skill
+   claude skill install theme-replicator.skill
    ```
 
 3. **Verify installation**:
@@ -48,6 +55,7 @@ Generate Xiaohongshu (Little Red Book) card images from Markdown with automatic 
    tar -xzf wechat-typer.skill -C ~/.claude/skills/
    tar -xzf wechat-theme-explorer.skill -C ~/.claude/skills/
    tar -xzf xiaohongshu-generator.skill -C ~/.claude/skills/
+   tar -xzf theme-replicator.skill -C ~/.claude/skills/
    ```
 
 2. **Restart Claude Code** to load the skills.
@@ -139,13 +147,28 @@ claude
 # 3. Provide the output files
 ```
 
+### Example 4: Replicate a Website Design
+
+```bash
+# Ask Claude:
+"I love this article's design at https://example.com/article, can you create a theme from it?"
+
+# Claude will use the theme-replicator skill to:
+# 1. Fetch and analyze the HTML
+# 2. Extract typography styles and color palette
+# 3. Generate a new theme file
+# 4. Integrate it into the typeset system
+# 5. Test the new theme
+```
+
 ## Available Themes
 
-All skills support 19 professional themes:
+All skills support 20 professional themes:
 
 - **wechat-default** - Classic WeChat style (blue-gray)
 - **wechat-tech** - Technology theme (blue + green code)
 - **wechat-anthropic** - Claude-inspired (terracotta gradient)
+- **sub2api** - Modern API platform (teal gradient, light theme)
 - **latepost-depth** - LatePost style (red emphasis)
 - **wechat-ft** - Financial Times (serif + beige)
 - **wechat-elegant** - Elegant Songti with first-line indent
@@ -186,11 +209,20 @@ Claude automatically triggers these skills when you mention:
 
 ### WeChat Typer
 - ✅ Markdown preprocessing (fixes Feishu exports, broken bold)
-- ✅ 19 professional typography themes
+- ✅ 20 professional typography themes
 - ✅ Syntax highlighting with macOS-style code blocks
 - ✅ Automatic image grid layout
 - ✅ WeChat optimization (CSS Grid → tables)
 - ✅ Inline CSS only (WeChat strips styles)
+
+### Theme Replicator
+- ✅ HTML style analysis and extraction
+- ✅ Typography pattern recognition
+- ✅ Color palette analysis
+- ✅ WeChat compatibility conversion
+- ✅ Automatic theme file generation
+- ✅ System integration
+- ✅ Support for local files and URLs
 
 ### Theme Explorer
 - ✅ Categorized theme listings
@@ -205,7 +237,7 @@ Claude automatically triggers these skills when you mention:
 - ✅ Smart content layout
 - ✅ Article metadata (char count, reading time)
 - ✅ Info panel on first page
-- ✅ All 19 themes supported
+- ✅ All 20 themes supported
 
 ## Troubleshooting
 
