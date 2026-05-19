@@ -31,6 +31,42 @@ pnpm run build
 > export PUPPETEER_DOWNLOAD_HOST=https://registry.npmmirror.com/-/binary/chromium-browser-snapshots
 > ```
 
+## Claude Code 技能
+
+项目包含三个 Claude Code 技能，让 Claude AI 帮助你更高效地使用 typeset：
+
+### 可用技能
+
+1. **wechat-typer** - 转换 Markdown 为微信 HTML
+2. **wechat-theme-explorer** - 浏览和选择 19 种主题
+3. **xiaohongshu-generator** - 生成小红书卡片图片
+
+### 安装技能
+
+```bash
+# 安装所有技能
+claude skill install skills/wechat-typer.skill
+claude skill install skills/wechat-theme-explorer.skill
+claude skill install skills/xiaohongshu-generator.skill
+```
+
+### 使用技能
+
+安装后，在 Claude Code 中可以直接对话：
+
+```
+# 转换文章
+"将我的 article.md 转换为微信 HTML，使用 tech 主题"
+
+# 推荐主题
+"我有一篇技术教程，应该用哪个主题？"
+
+# 生成小红书卡片
+"生成小红书卡片图片，使用 anthropic 主题"
+```
+
+详细文档请查看 [skills/README.md](skills/README.md) 和 [skills/INSTALL.md](skills/INSTALL.md)。
+
 ## 使用
 
 ### 转换为微信公众号 HTML

@@ -24,6 +24,15 @@ This project has CodeGraph initialized (`.codegraph/` exists). Use it for effici
 
 All source code lives under `cli/src/`.
 
+## Claude Code Skills
+
+This repository includes three Claude Code skills in the `skills/` directory:
+- `wechat-typer` - Convert Markdown to WeChat HTML
+- `wechat-theme-explorer` - Browse and choose from 19 typography themes
+- `xiaohongshu-generator` - Generate Xiaohongshu card images
+
+These skills help users interact with the typeset CLI through natural language. See `skills/README.md` for details.
+
 ## Commands
 
 ```bash
