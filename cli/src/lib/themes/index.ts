@@ -14,6 +14,7 @@ import { theme as warmDocs } from './base/warm-docs';
 // 导入技术主题
 import { theme as wechatTech } from './tech/wechat-tech';
 import { theme as wechatAnthropic } from './tech/wechat-anthropic';
+import { theme as sub2api } from './tech/sub2api';
 
 // 导入编辑主题
 import { theme as latepostDepth } from './editorial/latepost-depth';
@@ -45,6 +46,7 @@ const themeModules: Record<string, () => Promise<StyleConfig>> = {
   'warm-docs': () => import('./base/warm-docs').then(m => m.theme),
   'wechat-tech': () => import('./tech/wechat-tech').then(m => m.theme),
   'wechat-anthropic': () => import('./tech/wechat-anthropic').then(m => m.theme),
+  'sub2api': () => import('./tech/sub2api').then(m => m.theme),
   'latepost-depth': () => import('./editorial/latepost-depth').then(m => m.theme),
   'wechat-ft': () => import('./editorial/wechat-ft').then(m => m.theme),
   'wechat-nyt': () => import('./editorial/wechat-nyt').then(m => m.theme),
@@ -70,6 +72,7 @@ export const staticThemes: StylesMap = {
   'warm-docs': warmDocs,
   'wechat-tech': wechatTech,
   'wechat-anthropic': wechatAnthropic,
+  'sub2api': sub2api,
   'latepost-depth': latepostDepth,
   'wechat-ft': wechatFt,
   'wechat-nyt': wechatNyt,
@@ -137,7 +140,7 @@ export function getAvailableThemes() {
  */
 export const themeCategories = {
   base: ['wechat-default', 'wechat-elegant', 'wechat-deepread', 'warm-docs'],
-  tech: ['wechat-tech', 'wechat-anthropic'],
+  tech: ['wechat-tech', 'wechat-anthropic', 'sub2api'],
   editorial: ['latepost-depth', 'wechat-ft', 'wechat-nyt', 'wechat-medium', 'hische-editorial', 'lemonde'],
   artistic: ['wechat-jonyive', 'wechat-apple', 'kenya-emptiness', 'ando-concrete', 'gaudi-organic'],
   business: ['guardian', 'nikkei'],
