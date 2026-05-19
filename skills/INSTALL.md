@@ -12,19 +12,38 @@ Three Claude Code skills that help you create beautiful content for Chinese soci
 
 ### Step 1: Install the Typeset CLI
 
+Choose one of these installation methods:
+
+**Method A: Local Development**
 ```bash
-# Clone the repository
 git clone https://github.com/yourusername/Typography-Skill.git
 cd Typography-Skill/cli
 
-# Install dependencies
-pnpm install
+# Install dependencies (choose one)
+pnpm install    # Recommended
+npm install
 
 # Build
-pnpm run build
+pnpm run build  # or npm run build
 
 # Add to PATH (add to your ~/.bashrc or ~/.zshrc)
 export PATH="$PATH:$(pwd)"
+```
+
+**Method B: Global Installation (Recommended)**
+```bash
+cd Typography-Skill/cli
+pnpm install -g    # or npm install -g
+
+# Now 'typeset' command is available everywhere
+```
+
+**Method C: Using npx (No Installation)**
+```bash
+cd Typography-Skill/cli
+npx typeset article.md -s wechat-tech
+
+# npx handles installation automatically
 ```
 
 ### Step 2: Install the Skills

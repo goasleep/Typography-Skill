@@ -7,13 +7,21 @@
   },
   "main": "dist/lib/render.js",
   "types": "dist/lib/render.d.ts",
+  "files": [
+    "bin",
+    "dist",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "start": "node bin/typeset.js",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "commander": "^12.0.0",

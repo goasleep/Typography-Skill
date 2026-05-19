@@ -54,26 +54,48 @@ Generate Xiaohongshu (Little Red Book) card images from Markdown with automatic 
 
 ## Prerequisites
 
-These skills require the **typeset CLI** to be installed:
+These skills require the **typeset CLI** to be installed. Choose one of the following methods:
+
+### Option 1: Local Development
 
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/Typography-Skill.git
 cd Typography-Skill/cli
 
-# Install dependencies with pnpm
-pnpm install
+# Install dependencies (choose one)
+pnpm install    # Recommended
+npm install
 
 # Build TypeScript
-pnpm run build
+pnpm run build  # or npm run build
 
 # Add to PATH (add to your ~/.bashrc or ~/.zshrc)
 export PATH="$PATH:$(pwd)"
 ```
 
+### Option 2: Global Installation (Recommended)
+
+```bash
+cd cli
+pnpm install -g    # or npm install -g
+
+# Now you can use 'typeset' from anywhere
+typeset article.md -s wechat-tech
+```
+
+### Option 3: Using npx (No Installation Required)
+
+```bash
+cd cli
+npx typeset article.md -s wechat-tech
+
+# npx will automatically handle installation
+```
+
 **Requirements**:
 - Node.js >= 18.0.0
-- pnpm (package manager)
+- npm, pnpm, or npx (package manager)
 - Puppeteer (for Xiaohongshu image generation)
 
 ## Usage Examples

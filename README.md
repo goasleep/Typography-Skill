@@ -12,16 +12,52 @@
 
 ## 安装
 
+支持 npm、npx 和 pnpm 三种方式。
+
+### 方式 1：本地开发（推荐用于开发）
+
 ```bash
 # 克隆项目
 git clone <repo-url>
-cd Typography-Skill
+cd Typography-Skill/cli
 
-# 安装依赖
-cd cli && pnpm install
+# 选择包管理器安装依赖
+pnpm install    # 推荐
+# 或
+npm install
 
 # 构建 TypeScript
-pnpm run build
+pnpm run build   # 或 npm run build
+
+# 运行 CLI
+node bin/typeset.js article.md -s wechat-tech
+```
+
+### 方式 2：全局安装（推荐用于日常使用）
+
+```bash
+# 使用 pnpm（推荐）
+cd cli && pnpm install -g
+# 或使用 npm
+cd cli && npm install -g
+
+# 然后可以在任何地方使用
+typeset article.md -s wechat-tech
+typeset styles
+typeset image article.md -o ./xhs_cards
+```
+
+### 方式 3：使用 npx（无需安装）
+
+```bash
+# 在项目目录下，使用 npx 直接运行
+cd Typography-Skill/cli
+npx typeset article.md -s wechat-tech
+
+# npx 会自动：
+# 1. 检查本地是否已安装
+# 2. 如未安装，自动下载最新版本
+# 3. 运行完成后可选择是否保留
 ```
 
 **环境要求**：Node.js >= 18.0.0
@@ -30,6 +66,16 @@ pnpm run build
 > ```bash
 > export PUPPETEER_DOWNLOAD_HOST=https://registry.npmmirror.com/-/binary/chromium-browser-snapshots
 > ```
+
+## 包管理器说明
+
+| 命令 | pnpm | npm | npx |
+|------|------|-----|-----|
+| 安装依赖 | `pnpm install` | `npm install` | 自动处理 |
+| 构建 | `pnpm run build` | `npm run build` | - |
+| 运行 CLI | `pnpm start` 或 `node bin/typeset.js` | `npm start` 或 `node bin/typeset.js` | `npx typeset` |
+| 全局安装 | `pnpm install -g` | `npm install -g` | - |
+| 开发模式 | `pnpm run dev` | `npm run dev` | - |
 
 ## Claude Code 技能
 
@@ -69,24 +115,69 @@ claude skill install skills/xiaohongshu-generator.skill
 
 ## 使用
 
+### 本地开发模式
+
+```bash
+# 在项目目录下
+cd cli
+
+# 方式 1：直接运行 node
+node bin/typeset.js article.md
+
+# 方式 2：使用 npm script
+npm start -- article.md -s wechat-tech
+
+# 方式 3：使用 pnpm script
+pnpm start article.md -s wechat-tech
+```
+
+### 全局安装后使用（推荐）
+
+```bash
+# 安装后可在任何目录使用
+cd cli && npm install -g   # 或 pnpm install -g
+
+# 转换文章（在任何目录）
+typeset article.md -s wechat-tech -o output.html
+
+# 查看主题
+typeset styles
+
+# 生成小红书卡片
+typeset image article.md -o ./xhs_cards
+```
+
+### 使用 npx（无需全局安装）
+
+```bash
+# 在项目目录下，npx 会自动运行
+cd cli
+npx typeset article.md -s wechat-tech
+
+# 首次使用时，npx 会提示安装
+# 后续使用会直接运行已安装的版本
+```
+
+## 常用命令示例
+
 ### 转换为微信公众号 HTML
 
 ```bash
 # 默认主题，输出到标准输出
-node cli/bin/typeset.js article.md
+typeset article.md
 
 # 指定主题，输出到文件
-node cli/bin/typeset.js article.md -s wechat-tech -o output.html
+typeset article.md -s wechat-tech -o output.html
 
 # 跳过剪贴板兼容处理（保留 CSS Grid，不转换为表格）
-node cli/bin/typeset.js article.md --no-clipboard
+typeset article.md --no-clipboard
 ```
 
 ### 生成小红书卡片图片
 
 ```bash
 # 使用默认主题背景色
-node cli/bin/typeset.js image article.md -o ./xhs_output
+typeset image article.md -o ./xhs_output
 
 # 指定主题
 node cli/bin/typeset.js image article.md -s wechat-anthropic -o ./xhs_output
