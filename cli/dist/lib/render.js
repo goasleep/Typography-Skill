@@ -48,7 +48,7 @@ function createMarkdownIt() {
             else {
                 codeContent = escapeHtml(str);
             }
-            return `<div style="margin: 20px 0; border-radius: 8px; overflow: hidden; background: #383a42; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">${dots}<div style="padding: 16px; overflow-x: auto; background: #383a42;"><code style="display: block; color: #abb2bf; font-family: 'SF Mono', Monaco, 'Cascadia Code', Consolas, monospace; font-size: 14px; line-height: 1.6; white-space: pre;">${codeContent}</code></div></div>`;
+            return `<div data-code-block="true" style="margin: 20px 0; border-radius: 8px; overflow: hidden; background: #383a42; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">${dots}<div style="padding: 16px; overflow-x: auto; background: #383a42;"><code style="display: block; color: #abb2bf; font-family: 'SF Mono', Monaco, 'Cascadia Code', Consolas, monospace; font-size: 14px; line-height: 1.6; white-space: pre;">${codeContent}</code></div></div>`;
         },
     });
 }
@@ -58,6 +58,70 @@ function escapeHtml(str) {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
+}
+// highlight.js class → inline style (One Dark Pro palette, matching hardcoded code block colors)
+const HLJS_CLASS_TO_STYLE = {
+    'hljs-comment': 'color:#5c6370;font-style:italic;',
+    'hljs-quote': 'color:#5c6370;font-style:italic;',
+    'hljs-doctag': 'color:#c678dd;',
+    'hljs-keyword': 'color:#c678dd;',
+    'hljs-formula': 'color:#c678dd;',
+    'hljs-section': 'color:#e06c75;',
+    'hljs-name': 'color:#e06c75;',
+    'hljs-selector-tag': 'color:#e06c75;',
+    'hljs-deletion': 'color:#e06c75;',
+    'hljs-subst': 'color:#e06c75;',
+    'hljs-literal': 'color:#56b6c2;',
+    'hljs-addition': 'color:#98c379;',
+    'hljs-attribute': 'color:#98c379;',
+    'hljs-meta-string': 'color:#98c379;',
+    'hljs-string': 'color:#98c379;',
+    'hljs-built_in': 'color:#e5c07b;',
+    'hljs-class': 'color:#e5c07b;',
+    'hljs-title': 'color:#e5c07b;',
+    'hljs-title.class_': 'color:#e5c07b;',
+    'hljs-attr': 'color:#d19a66;',
+    'hljs-variable': 'color:#d19a66;',
+    'hljs-template-variable': 'color:#d19a66;',
+    'hljs-type': 'color:#e5c07b;',
+    'hljs-selector-class': 'color:#e5c07b;',
+    'hljs-selector-attr': 'color:#e5c07b;',
+    'hljs-selector-pseudo': 'color:#e5c07b;',
+    'hljs-number': 'color:#d19a66;',
+    'hljs-symbol': 'color:#d19a66;',
+    'hljs-bullet': 'color:#d19a66;',
+    'hljs-link': 'color:#d19a66;text-decoration:underline;',
+    'hljs-meta': 'color:#61afef;',
+    'hljs-selector-id': 'color:#61afef;',
+    'hljs-function': 'color:#61afef;',
+    'hljs-title.function_': 'color:#61afef;',
+    'hljs-regexp': 'color:#98c379;',
+    'hljs-tag': 'color:#e06c75;',
+    'hljs-params': 'color:#abb2bf;',
+    'hljs-punctuation': 'color:#abb2bf;',
+    'hljs-operator': 'color:#56b6c2;',
+    'hljs-emphasis': 'font-style:italic;',
+    'hljs-strong': 'font-weight:700;',
+};
+function convertHljsToInlineStyles(html) {
+    return html.replace(/<span class="([^"]*)"/g, (match, classes) => {
+        const classList = classes.split(/\s+/).filter(Boolean);
+        const styles = classList
+            .map(c => HLJS_CLASS_TO_STYLE[c])
+            .filter(Boolean);
+        if (styles.length === 0)
+            return match;
+        return `<span style="${styles.join('')}"`;
+    });
+}
+function protectCodeWhitespace(html) {
+    const parts = html.split(/(<[^>]+>)/);
+    return parts.map((part, i) => {
+        if (i % 2 === 0) {
+            return part.replace(/ /g, '&nbsp;').replace(/\n/g, '<br>');
+        }
+        return part;
+    }).join('');
 }
 function preprocessMarkdown(content) {
     // Normalize horizontal rules
@@ -202,7 +266,19 @@ function applyInlineStyles(html, styleKey) {
     const doc = dom.window.document;
     groupConsecutiveImages(doc);
     Object.keys(style).forEach(selector => {
-        if (selector === 'pre' || selector === 'code' || selector === 'pre code') {
+        if (selector === 'pre' || selector === 'pre code') {
+            return;
+        }
+        // code 选择器特殊处理：只应用到不在代码块内的行内 code
+        if (selector === 'code') {
+            const elements = doc.querySelectorAll(selector);
+            elements.forEach(el => {
+                if (el.closest('[data-code-block]')) {
+                    return;
+                }
+                const currentStyle = el.getAttribute('style') || '';
+                el.setAttribute('style', currentStyle + '; ' + style[selector]);
+            });
             return;
         }
         const elements = doc.querySelectorAll(selector);
@@ -334,35 +410,55 @@ function simplifyForClipboard(html, styleKey) {
         });
         doc.body.appendChild(section);
     }
-    // Simplify code blocks
-    const codeBlocks = doc.querySelectorAll('div[style*="border-radius: 8px"]');
+    // Simplify code blocks for WeChat compatibility
+    const codeBlocks = doc.querySelectorAll('[data-code-block]');
     codeBlocks.forEach(block => {
         const codeElement = block.querySelector('code');
-        if (codeElement) {
-            const codeText = codeElement.textContent || '';
-            const pre = doc.createElement('pre');
-            const code = doc.createElement('code');
-            pre.setAttribute('style', 'background: linear-gradient(to bottom, #2a2c33 0%, #383a42 8px, #383a42 100%);' +
-                'padding: 0; border-radius: 6px; overflow: hidden; margin: 24px 0;' +
-                'box-shadow: 0 2px 8px rgba(0,0,0,0.15);');
-            code.setAttribute('style', 'color: #abb2bf; font-family: "SF Mono", Consolas, Monaco, "Courier New", monospace;' +
+        if (!codeElement)
+            return;
+        // 1. Retain highlight.js HTML, convert classes to inline styles
+        let codeHtml = codeElement.innerHTML;
+        codeHtml = convertHljsToInlineStyles(codeHtml);
+        // 2. Protect whitespace and newlines from WeChat editor compression
+        codeHtml = protectCodeWhitespace(codeHtml);
+        // Outer container
+        const wrapper = doc.createElement('section');
+        const wrapperStyle = styleConfig.styles['code_block'] ||
+            'margin: 20px 0; border-radius: 8px; overflow: hidden; background: #383a42; box-shadow: 0 2px 8px rgba(0,0,0,0.15);';
+        wrapper.setAttribute('style', wrapperStyle);
+        // <pre> and <code> — clean, no nested divs
+        const pre = doc.createElement('pre');
+        let preStyle = styleConfig.styles['pre'] ||
+            'margin: 0; padding: 16px 20px; background: transparent; overflow-x: auto; line-height: 1.7; border-radius: 0;';
+        // Strip properties that should be owned by the wrapper — the wrapper provides
+        // the code block background, margin, border-radius and shadow as a single unit.
+        preStyle = preStyle
+            .replace(/background:\s*[^;]+;?/gi, '')
+            .replace(/background-color:\s*[^;]+;?/gi, '')
+            .replace(/background-image:\s*[^;]+;?/gi, '')
+            .replace(/box-shadow:\s*[^;]+;?/gi, '')
+            .replace(/;\s*;/g, ';')
+            .trim();
+        // Force margin and border-radius to 0 so the pre fills the wrapper cleanly
+        preStyle = preStyle
+            .replace(/margin\s*:\s*[^;]+;?/gi, '')
+            .replace(/border-radius\s*:\s*[^;]+;?/gi, '')
+            .replace(/;\s*;/g, ';')
+            .trim();
+        preStyle += '; margin: 0; border-radius: 0';
+        pre.setAttribute('style', preStyle);
+        const code = doc.createElement('code');
+        const codeStyle = styleConfig.styles['pre_code'] ||
+            'color: #abb2bf; font-family: "SF Mono", Consolas, Monaco, "Courier New", monospace;' +
                 'font-size: 14px; line-height: 1.7; display: block; white-space: pre;' +
-                'padding: 16px 20px; -webkit-font-smoothing: antialiased;');
-            // Re-insert macOS window dots
-            const dotsContainer = doc.createElement('div');
-            dotsContainer.setAttribute('style', 'display: flex; align-items: center; gap: 6px; padding: 10px 12px; background: #2a2c33; border-bottom: 1px solid #1e1f24;');
-            for (const color of ['#ff5f56', '#ffbd2e', '#27c93f']) {
-                const dot = doc.createElement('span');
-                dot.setAttribute('style', `width: 12px; height: 12px; border-radius: 50%; background: ${color};`);
-                dotsContainer.appendChild(dot);
-            }
-            code.textContent = codeText;
-            pre.appendChild(dotsContainer);
-            pre.appendChild(code);
-            const outerPre = block.closest('pre') || block.parentNode;
-            if (outerPre?.parentNode) {
-                outerPre.parentNode.replaceChild(pre, outerPre);
-            }
+                'padding: 0; -webkit-font-smoothing: antialiased;';
+        code.setAttribute('style', codeStyle);
+        code.innerHTML = codeHtml;
+        pre.appendChild(code);
+        wrapper.appendChild(pre);
+        const outerPre = block.closest('pre') || block.parentNode;
+        if (outerPre?.parentNode) {
+            outerPre.parentNode.replaceChild(wrapper, outerPre);
         }
     });
     // Flatten list items

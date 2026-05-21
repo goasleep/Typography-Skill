@@ -33,12 +33,39 @@ describe('render', () => {
     expect(() => render('test', 'nonexistent-style')).toThrow(/Unknown style/);
   });
 
-  it('includes code block styling with macOS dots', () => {
+  it('includes code block wrapper with clean structure', () => {
     const md = '```javascript\nconsole.log("hello");\n```';
     const html = render(md, 'wechat-default');
-    expect(html).toContain('#ff5f56'); // red dot
-    expect(html).toContain('#ffbd2e'); // yellow dot
-    expect(html).toContain('#27c93f'); // green dot
+    expect(html).toContain('<section style="');
+    expect(html).toContain('<pre style="');
+    expect(html).toContain('<code style="');
+    // No macOS dots in simplified output
+    expect(html).not.toContain('#ff5f56');
+    expect(html).not.toContain('#ffbd2e');
+    expect(html).not.toContain('#27c93f');
+  });
+
+  it('preserves syntax highlighting in code blocks', () => {
+    const md = '```javascript\nfunction hello() {\n  console.log("hello world");\n}\n```';
+    const html = render(md, 'wechat-default');
+    // Should contain inline color styles (converted from hljs classes), not hljs class names
+    expect(html).toMatch(/style="[^"]*color:#/);
+    expect(html).not.toMatch(/class="hljs-/);
+  });
+
+  it('protects code whitespace for WeChat', () => {
+    const md = '```javascript\nfunction hello() {\n  console.log("hello world");\n}\n```';
+    const html = render(md, 'wechat-default');
+    // Should contain &nbsp; for spaces and <br> for newlines in code content
+    expect(html).toContain('&nbsp;');
+    expect(html).toContain('<br>');
+  });
+
+  it('applies inline code styles from theme', () => {
+    const md = 'This is `inline code` in a paragraph.';
+    const html = render(md, 'wechat-default');
+    // Inline code should receive theme styles (e.g. background-color from wechat-default code selector)
+    expect(html).toContain('background-color:');
   });
 
   it('preserves Chinese content', () => {
@@ -66,9 +93,9 @@ describe('render', () => {
 });
 
 describe('getAvailableStyles', () => {
-  it('returns all 19 themes with key and name', () => {
+  it('returns all 21 themes with key and name', () => {
     const styles = getAvailableStyles();
-    expect(styles.length).toBe(19);
+    expect(styles.length).toBe(21);
     styles.forEach(s => {
       expect(s.key).toBeTruthy();
       expect(s.name).toBeTruthy();
@@ -90,6 +117,6 @@ describe('getAvailableStyles', () => {
 describe('STYLES re-export', () => {
   it('STYLES object is exported from render', () => {
     expect(STYLES).toBeDefined();
-    expect(Object.keys(STYLES).length).toBe(19);
+    expect(Object.keys(STYLES).length).toBe(21);
   });
 });

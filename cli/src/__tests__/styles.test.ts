@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { STYLES } from '../lib/styles';
 
 describe('STYLES', () => {
-  it('has exactly 19 style entries', () => {
-    expect(Object.keys(STYLES).length).toBe(19);
+  it('has exactly 21 style entries', () => {
+    expect(Object.keys(STYLES).length).toBe(21);
   });
 
   it('every style has a non-empty name', () => {
